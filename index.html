@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Canvas 中文排版引擎实验场</title>
+  <link rel="stylesheet" href="./src/ui/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>排版引擎 <span class="dim">Canvas · FontFace · Web Worker · IndexedDB</span></h1>
+    <div class="backend">
+      <span id="backend" class="badge">初始化中…</span>
+      <span id="layoutTime" class="dim"></span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel controls">
+      <section>
+        <h2>文本</h2>
+        <div class="row">
+          <label>示例</label>
+          <select id="sample"></select>
+        </div>
+        <textarea id="text" rows="10" spellcheck="false"></textarea>
+        <div class="row">
+          <button id="genLarge">注入 10 万字符压测</button>
+          <span id="charCount" class="dim"></span>
+        </div>
+      </section>
+
+      <section>
+        <h2>排版参数</h2>
+        <div class="grid2">
+          <label>排版方向
+            <select id="mode">
+              <option value="horizontal">横排</option>
+              <option value="vertical-rl">竖排（从右向左）</option>
+              <option value="vertical-lr">竖排（从左向右）</option>
+            </select>
+          </label>
+          <label>对齐
+            <select id="align">
+              <option value="left">左对齐 / 顶对齐</option>
+              <option value="center">居中</option>
+              <option value="right">右对齐 / 底对齐</option>
+              <option value="justify" selected>两端对齐</option>
+            </select>
+          </label>
+          <label>字号 <output id="fontSizeVal">16</output>px
+            <input id="fontSize" type="range" min="10" max="40" value="16" />
+          </label>
+          <label>行高 <output id="lineHeightVal">1.8</output>
+            <input id="lineHeight" type="range" min="1" max="3" step="0.05" value="1.8" />
+          </label>
+          <label>字距 <output id="letterSpacingVal">0</output>px
+            <input id="letterSpacing" type="range" min="-2" max="10" step="0.5" value="0" />
+          </label>
+          <label>首行缩进 <output id="textIndentVal">2</output>em
+            <input id="textIndent" type="range" min="0" max="4" step="0.5" value="2" />
+          </label>
+          <label>容器<output id="measureVal">720</output>px
+            <input id="measure" type="range" min="200" max="1000" step="10" value="720" />
+          </label>
+          <label>段间距 <output id="paraSpacingVal">0.6</output>em
+            <input id="paraSpacing" type="range" min="0" max="3" step="0.1" value="0.6" />
+          </label>
+        </div>
+        <div class="checks">
+          <label><input id="kinsoku" type="checkbox" checked /> 标点避头尾</label>
+          <label><input id="hanging" type="checkbox" checked /> 句读悬挂</label>
+          <label><input id="cjkLatin" type="checkbox" checked /> 中英文自动间距</label>
+          <label><input id="showBoxes" type="checkbox" /> 显示行框</label>
+        </div>
+      </section>
+
+      <section>
+        <h2>字体（FontFace + IndexedDB）</h2>
+        <div class="row">
+          <label>族名</label>
+          <input id="fontFamily" type="text" value="Noto Serif SC" />
+        </div>
+        <div class="row">
+          <label>字重</label>
+          <select id="fontWeight">
+            <option value="normal" selected>normal</option>
+            <option value="bold">bold</option>
+            <option value="400">400</option>
+            <option value="700">700</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>字体 URL</label>
+          <input id="fontUrl" type="text" placeholder="https://…/font.woff2" />
+        </div>
+        <div class="row">
+          <button id="loadFont">加载并重排</button>
+          <button id="clearFont">清除缓存</button>
+        </div>
+        <div id="fontStatus" class="dim">使用系统字体回退栈。</div>
+      </section>
+
+      <section>
+        <h2>渲染后端</h2>
+        <div class="row">
+          <button id="useCanvas">Canvas（Worker 排版）</button>
+          <button id="useDom">降级为 DOM 排版</button>
+        </div>
+        <label class="row"><input id="virtualize" type="checkbox" checked /> 大文本虚拟滚动（仅 Canvas）</label>
+      </section>
+    </aside>
+
+    <section class="panel stage">
+      <div class="stage-toolbar">
+        <div id="renderMode" class="badge">Canvas</div>
+        <div class="dim" id="stageInfo"></div>
+      </div>
+      <div id="canvasWrap" class="canvas-wrap">
+        <canvas id="canvas"></canvas>
+        <div id="domStage" class="dom-stage" hidden></div>
+      </div>
+    </section>
+
+    <section class="panel lines">
+      <h2>行信息 <span id="lineCount" class="dim"></span></h2>
+      <div class="legend">
+        <span><i class="sw sw-hang"></i>悬挂</span>
+        <span><i class="sw sw-push"></i>押込</span>
+        <span><i class="sw sw-pull"></i>追出</span>
+        <span><i class="sw sw-stretch"></i>两端拉伸</span>
+        <span><i class="sw sw-split"></i>长词拆字</span>
+      </div>
+      <div class="table-wrap">
+        <table id="lineTable">
+          <thead>
+            <tr>
+              <th>#</th><th>文本</th><th>已用</th><th>剩余</th>
+              <th>拉伸</th><th>断行原因</th><th>段落</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./src/ui/app.js"></script>
+</body>
+</html>

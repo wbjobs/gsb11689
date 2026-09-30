@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas 排版引擎 — 断行 · 避头尾 · 混排 · 竖排</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+  <h1>Canvas 排版引擎</h1>
+  <span id="status"></span>
+  <span class="stat">行数：<b id="line-count">-</b></span>
+  <span class="stat">排版耗时：<b id="layout-time">-</b></span>
+  <progress id="progress" value="0" max="1"></progress>
+</header>
+
+<main>
+  <aside class="controls">
+    <section>
+      <h2>文本</h2>
+      <select id="preset">
+        <option value="">示例文本…</option>
+        <option value="mixed">中英文混排</option>
+        <option value="punct">标点避头尾</option>
+        <option value="longword">超长单词</option>
+        <option value="vertical">竖排</option>
+        <option value="big">大量文本（~10万字，性能）</option>
+      </select>
+      <textarea id="text" rows="8" spellcheck="false"></textarea>
+    </section>
+
+    <section>
+      <h2>排版参数</h2>
+      <label>行宽 <span id="width-val"></span>
+        <input type="range" id="width" min="120" max="900" value="420"></label>
+      <label>字号 <span id="fontSize-val"></span>
+        <input type="range" id="fontSize" min="12" max="48" value="20"></label>
+      <label>行高 <span id="lineHeight-val"></span>
+        <input type="range" id="lineHeight" min="1" max="3" step="0.05" value="1.6"></label>
+      <label>字距 <span id="letterSpacing-val"></span>
+        <input type="range" id="letterSpacing" min="-2" max="20" step="0.5" value="0"></label>
+      <label>首行缩进 <span id="indent-val"></span>
+        <input type="range" id="indent" min="0" max="4" step="0.5" value="2"></label>
+      <label>对齐
+        <select id="align">
+          <option value="left">左对齐</option>
+          <option value="center">居中</option>
+          <option value="right">右对齐</option>
+          <option value="justify">两端对齐</option>
+        </select></label>
+      <label>方向
+        <select id="writingMode">
+          <option value="horizontal">横排</option>
+          <option value="vertical">竖排（从右往左）</option>
+        </select></label>
+      <label class="chk"><input type="checkbox" id="hanging" checked> 标点悬挂（ぶら下がり）</label>
+      <label>引擎
+        <select id="engine">
+          <option value="auto">自动（Worker 优先）</option>
+          <option value="main">强制主线程 Canvas</option>
+          <option value="dom">强制 DOM 降级</option>
+        </select></label>
+    </section>
+
+    <section>
+      <h2>自定义字体（FontFace + IndexedDB）</h2>
+      <input type="url" id="fontUrl" placeholder="字体文件 URL（woff2/otf/ttf）">
+      <div class="row">
+        <button id="loadFont">从 URL 加载</button>
+        <input type="file" id="fontFile" accept=".woff2,.woff,.otf,.ttf">
+      </div>
+      <p id="font-status" class="hint">字体会缓存到 IndexedDB，二次加载离线可用；加载完成后自动重排。</p>
+    </section>
+  </aside>
+
+  <section class="stage">
+    <div id="canvas-wrap" class="scroll"><canvas id="canvas"></canvas></div>
+    <div id="dom-wrap" class="scroll" style="display:none"></div>
+
+    <h2>行信息（点击行高亮）</h2>
+    <div class="scroll table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>内容</th><th>宽 px</th><th>字数</th><th>断行原因</th></tr></thead>
+        <tbody id="line-info"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>

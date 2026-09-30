@@ -1,0 +1,45 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0; font: 14px/1.5 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #f2f3f5; color: #1a1a1a;
+}
+header {
+  display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+  background: #fff; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 2;
+}
+header h1 { font-size: 16px; margin: 0; }
+header progress { width: 120px; height: 6px; }
+.stat { color: #555; }
+#status.ok { color: #188038; }
+#status.warn { color: #d93025; }
+main { display: flex; gap: 16px; padding: 16px 20px; align-items: flex-start; }
+.controls { width: 300px; flex: none; display: flex; flex-direction: column; gap: 12px; }
+.controls section { background: #fff; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.controls h2, .stage h2 { font-size: 13px; margin: 0 0 8px; color: #666; font-weight: 600; }
+.controls label { display: block; margin: 8px 0 2px; color: #333; }
+.controls label span { float: right; color: #888; font-variant-numeric: tabular-nums; }
+.controls input[type=range] { width: 100%; }
+.controls select, .controls textarea, .controls input[type=url] {
+  width: 100%; margin-top: 4px; padding: 6px; border: 1px solid #ccc; border-radius: 6px; font: inherit;
+}
+.controls textarea { resize: vertical; font-family: ui-monospace, monospace; font-size: 12px; }
+.controls .chk { display: flex; align-items: center; gap: 6px; }
+.controls .chk input { width: auto; }
+.row { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+.row button { flex: none; padding: 6px 12px; border: 1px solid #4285f4; background: #4285f4; color: #fff; border-radius: 6px; cursor: pointer; }
+.row input[type=file] { font-size: 12px; width: 100%; }
+.hint { font-size: 12px; color: #888; margin: 8px 0 0; }
+.stage { flex: 1; min-width: 0; }
+.scroll { overflow: auto; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+#canvas-wrap { max-height: 60vh; }
+#dom-wrap { max-height: 60vh; }
+.stage h2 { margin: 16px 0 8px; }
+.table-wrap { max-height: 40vh; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+th, td { padding: 4px 10px; border-bottom: 1px solid #eee; text-align: left; white-space: nowrap; }
+th { position: sticky; top: 0; background: #fafafa; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: #f5f8ff; }
+tbody tr.hl { background: #dbe7fd; }
+.mono { font-family: ui-monospace, monospace; }
+.dom-fallback p { margin: 0; }
